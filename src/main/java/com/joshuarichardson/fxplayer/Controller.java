@@ -11,8 +11,19 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,25 +42,38 @@ public class Controller implements Initializable {
 
 
     private PlaybackManager playbackManager;
-    private ImageResourceManager imageResourceManager = new ImageResourceManager(getClass(), "img", new ImgRef("play.png", 3), new ImgRef("pause.png", 0), new ImgRef("next.png", 0), new ImgRef("previous.png", 0), new ImgRef("placeholder.png", 0));
+    private ImageResourceManager imageResourceManager = new ImageResourceManager(getClass(),"img",
+            new ImgRef("play.png", 3), new ImgRef("pause.png", 0),
+            new ImgRef("next.png", 0), new ImgRef("previous.png", 0),
+            new ImgRef("placeholder.png", 0)
+    );
 
 
     public void initialize(URL location, ResourceBundle resources) {
-
         ivAlbumArt.setImage(imageResourceManager.get("placeholder").getImage());
+
         bindImageViewToButton(btnPlayPause, new ImageView(imageResourceManager.get("play").getImage()), 20 ,20, 4);
         bindImageViewToButton(btnPrevious, new ImageView(imageResourceManager.get("previous").getImage()), 12, 12, -2);
         bindImageViewToButton(btnForward, new ImageView(imageResourceManager.get("next").getImage()), 12, 12, 2);
 
-
-
         btnPlayPause.setOnAction(event -> playbackManager.playingProperty().set(!playbackManager.isPlaying()));
+
 
         btnAddMusic.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open MP3 File");
             File file = fileChooser.showOpenDialog(btnPrevious.getScene().getWindow());
             if (file != null) {
+
+                try {
+                    AudioFile f = AudioFileIO.read(file);
+                    Tag tag = f.getTag();
+                    System.out.println(tag.getFirst(FieldKey.ARTIST));
+                    System.out.println(tag.getFirst(FieldKey.YEAR));
+                } catch (CannotReadException | IOException | TagException | InvalidAudioFrameException | ReadOnlyFileException e) {
+                    e.printStackTrace();
+                }
+
                 playbackManager = new PlaybackManager(file.toURI().toASCIIString());
 
                 playbackManager.playingProperty().addListener((observable, oldValue, newValue) -> {

@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
  */
 public class Song{
 
+    private MainDatabase db;
+
+
+
     private String fileName;
     private String artistId;
     private String id;
@@ -19,15 +23,24 @@ public class Song{
     private LocalDateTime dateAdded;
 
     public Song(MainDatabase db, String fileName) {
+        this.db = db;
         this.fileName = fileName;
         this.id = Utils.artifactId();
         this.rating = 0;
         this.plays = 0;
         this.dateAdded = LocalDateTime.now();
         this.artistId = Utils.artifactId();
-        if (db.containsSong(fileName)) {
+    }
 
-        }
+
+    public Song(String fileName, String artistId, String id, int rating, int plays, String albumId, LocalDateTime dateAdded) {
+        this.fileName = fileName;
+        this.artistId = artistId;
+        this.id = id;
+        this.rating = rating;
+        this.plays = plays;
+        this.albumId = albumId;
+        this.dateAdded = dateAdded;
     }
 
     public static Song fromJson(String json) {
@@ -86,5 +99,9 @@ public class Song{
 
     public String getFileName() {
         return fileName;
+    }
+
+    public MainDatabase getDb() {
+        return db;
     }
 }
