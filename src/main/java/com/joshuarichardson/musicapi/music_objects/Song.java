@@ -3,6 +3,7 @@ package com.joshuarichardson.musicapi.music_objects;
 import com.google.gson.Gson;
 import com.joshuarichardson.musicapi.Utils;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ public class Song{
 
 
 
-    private String fileName;
+    private File musicFile;
     private String artistId;
     private String id;
     private int rating;
@@ -22,19 +23,22 @@ public class Song{
     private String albumId;
     private LocalDateTime dateAdded;
 
-    public Song(MainDatabase db, String fileName) {
+
+    public Song(MainDatabase db, File musicFile) {
         this.db = db;
-        this.fileName = fileName;
+        this.musicFile = musicFile;
         this.id = Utils.artifactId();
         this.rating = 0;
         this.plays = 0;
         this.dateAdded = LocalDateTime.now();
-        this.artistId = Utils.artifactId();
+
+
     }
 
 
-    public Song(String fileName, String artistId, String id, int rating, int plays, String albumId, LocalDateTime dateAdded) {
-        this.fileName = fileName;
+    //For development use only
+    public Song(File musicFile, String artistId, String id, int rating, int plays, String albumId, LocalDateTime dateAdded) {
+        this.musicFile = musicFile;
         this.artistId = artistId;
         this.id = id;
         this.rating = rating;
@@ -53,7 +57,7 @@ public class Song{
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof Song && ((Song) obj).fileName.equals(fileName);
+        return obj != null && obj instanceof Song && ((Song) obj).getMusicFile().equals(musicFile);
     }
 
     public String getId() {
@@ -97,11 +101,12 @@ public class Song{
         return dateAdded;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
 
     public MainDatabase getDb() {
         return db;
+    }
+
+    public File getMusicFile() {
+        return musicFile;
     }
 }
