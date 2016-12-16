@@ -60,4 +60,13 @@ public class MainDatabase {
     public List<Song> getSongsIn(Album album) {
         return songs.stream().filter(s -> s.getAlbumId().equals(album.getId())).collect(Collectors.toList());
     }
+
+
+    public Artist getArtistByName(String artistName) {
+        return artists.stream().filter(a -> a.getName().equals(artistName)).findAny().orElse(null);
+    }
+
+    public Album getAlbumByName(String albumName) {
+        return albums.stream().filter(a -> a.getName().equals(albumName)).findAny().orElse(null);
+    }
 }

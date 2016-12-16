@@ -16,4 +16,12 @@ public class Utils {
         return UUID.randomUUID().toString();
     }
 
+    public static Integer tryParse(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
 }
+

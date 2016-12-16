@@ -7,6 +7,10 @@ public class Album {
     private String name;
     private String id;
 
+    public Album(String name) {
+        this.name = name;
+    }
+
 
     public String getId() {
         return id;
@@ -14,5 +18,9 @@ public class Album {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 }

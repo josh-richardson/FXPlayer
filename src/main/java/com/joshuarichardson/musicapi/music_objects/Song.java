@@ -2,6 +2,7 @@ package com.joshuarichardson.musicapi.music_objects;
 
 import com.google.gson.Gson;
 import com.joshuarichardson.musicapi.Utils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -13,38 +14,52 @@ public class Song{
 
     private MainDatabase db;
 
-
-
     private File musicFile;
     private String artistId;
     private String id;
-    private int rating;
-    private int plays;
     private String albumId;
-    private LocalDateTime dateAdded;
-
+    public Metadata metadata;
 
     public Song(MainDatabase db, File musicFile) {
         this.db = db;
         this.musicFile = musicFile;
         this.id = Utils.artifactId();
-        this.rating = 0;
-        this.plays = 0;
-        this.dateAdded = LocalDateTime.now();
+        this.metadata = new Metadata(musicFile);
+
+        db.getSongs().add(this);
+
+        if (!StringUtils.isBlank(metadata.artist)) {
+            Artist memberArtist;
+            if ((memberArtist = db.getArtistByName(metadata.artist)) != null) {
+                artistId = memberArtist.getId();
+            } else {
+                Artist songArtist = new Artist(metadata.artist);
+                db.getArtists().add(songArtist);
+                artistId = songArtist.getId();
+            }
+        }
+
+        if (!StringUtils.isBlank(metadata.album)) {
+            Album memberAlbum;
+            if ((memberAlbum = db.getAlbumByName(metadata.album)) != null) {
+                albumId = memberAlbum.getId();
+            } else {
+                Album songAlbum = new Album(metadata.album);
+                db.getAlbums().add(songAlbum);
+                albumId = songAlbum.getId();
+            }
+        }
 
 
     }
 
 
     //For development use only
-    public Song(File musicFile, String artistId, String id, int rating, int plays, String albumId, LocalDateTime dateAdded) {
+    public Song(File musicFile, String artistId, String id, String albumId) {
         this.musicFile = musicFile;
         this.artistId = artistId;
         this.id = id;
-        this.rating = rating;
-        this.plays = plays;
         this.albumId = albumId;
-        this.dateAdded = dateAdded;
     }
 
     public static Song fromJson(String json) {
@@ -64,22 +79,6 @@ public class Song{
         return id;
     }
 
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public int getPlays() {
-        return plays;
-    }
-
-    public void setPlays(int plays) {
-        this.plays = plays;
-    }
-
     public void setArtistId(String artistId) {
         this.artistId = artistId;
     }
@@ -88,7 +87,6 @@ public class Song{
         this.albumId = albumId;
     }
 
-
     public String getArtistId() {
         return artistId;
     }
@@ -96,11 +94,6 @@ public class Song{
     public String getAlbumId() {
         return albumId;
     }
-
-    public LocalDateTime getDateAdded() {
-        return dateAdded;
-    }
-
 
     public MainDatabase getDb() {
         return db;
