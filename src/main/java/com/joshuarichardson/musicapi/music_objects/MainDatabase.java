@@ -38,7 +38,7 @@ public class MainDatabase {
     }
 
     public boolean containsSong(String fileName) {
-        return songs.stream().anyMatch(s -> s.getFileName().equals(fileName));
+        return songs.stream().anyMatch(s -> s.getFilePath().equals(fileName));
     }
 
     public List<Artist> getArtists() {

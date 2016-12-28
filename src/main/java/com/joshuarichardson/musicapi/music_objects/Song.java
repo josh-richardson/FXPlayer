@@ -5,7 +5,6 @@ import com.joshuarichardson.musicapi.Utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.time.LocalDateTime;
 
 /**
  * @author: Joshua Richardson on 02/12/2016.
@@ -25,8 +24,6 @@ public class Song{
         this.musicFile = musicFile;
         this.id = Utils.artifactId();
         this.metadata = new Metadata(musicFile);
-
-        db.getSongs().add(this);
 
         if (!StringUtils.isBlank(metadata.artist)) {
             Artist memberArtist;
@@ -72,7 +69,7 @@ public class Song{
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof Song && ((Song) obj).getMusicFile().equals(musicFile);
+        return obj != null && obj instanceof Song && ((Song) obj).getFile().equals(musicFile);
     }
 
     public String getId() {
@@ -99,7 +96,9 @@ public class Song{
         return db;
     }
 
-    public File getMusicFile() {
+    public File getFile() {
         return musicFile;
     }
+
+    public String getFilePath() { return musicFile.toURI().toASCIIString(); }
 }

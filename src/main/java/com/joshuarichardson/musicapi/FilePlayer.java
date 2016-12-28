@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import java.io.File;
+
 /**
  * @author: Joshua Richardson on 02/12/2016.
  */
@@ -16,8 +18,8 @@ public class FilePlayer {
     private SimpleBooleanProperty readyState = new SimpleBooleanProperty(false);
 
 
-    public FilePlayer(String fileName, PlaybackManager manager) {
-        media = new Media(fileName);
+    public FilePlayer(File file, PlaybackManager manager) {
+        media = new Media(file.toURI().toASCIIString());
         player = new MediaPlayer(media);
         player.setOnReady(() -> readyState.set(true));
 

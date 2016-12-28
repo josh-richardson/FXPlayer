@@ -17,14 +17,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         ArrayList<Song> songs = new ArrayList<>();
-//        songs.add(new Song("C://file.mp3", "1111-1111-1111-1111", "1111-1111-1111-1111", 5, 0, "1111-1111-1111-1111", LocalDateTime.of(2003, 5, 3, 12, 1)));
-        songs.add(new Song("C://file.mp3", "1111-1111-1111-1111", "1111-1111-1111-1111", 5, 0, "1111-1111-1111-1111", LocalDateTime.of(2003, 5, 3, 12, 1)));
-        System.out.println(new Gson().toJson(songs, ArrayList.class));
-
 
         FXMLLoader fxmlLoader = new FXMLLoader();
 
-        fxmlLoader.setController(new Controller());
+        fxmlLoader.setController(new Controller(primaryStage));
         Parent root = fxmlLoader.load(getClass().getResourceAsStream("main.fxml"));
 
         primaryStage.setTitle("FXPlayer");

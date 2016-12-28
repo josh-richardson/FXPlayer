@@ -1,22 +1,24 @@
 package com.joshuarichardson.musicapi;
 
 import com.joshuarichardson.musicapi.music_objects.MainDatabase;
+import com.joshuarichardson.musicapi.music_objects.Playlist;
+import com.joshuarichardson.musicapi.music_objects.Song;
 import javafx.beans.property.SimpleBooleanProperty;
 
+import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Joshua on 02/12/2016.
  */
 public class PlaybackManager {
 
-    private List<String> fileNames;
     private int currentIndex = - 1;
-    private FilePlayer currentFilePlayer;
+    private FilePlayer currentPlayer;
+    private Playlist currentPlaylist;
     private MainDatabase songDatabase;
     private SimpleBooleanProperty playing = new SimpleBooleanProperty(false);
+    private Song currentSong;
 
 
     public boolean isPlaying() {
@@ -28,23 +30,27 @@ public class PlaybackManager {
     }
 
 
-    public PlaybackManager(String... fileNames) {
-        this.fileNames = Arrays.stream(fileNames).collect(Collectors.toList());
-
-        currentFilePlayer = playNext();
+    public PlaybackManager(File... files) {
+        Arrays.stream(files).forEach(this::addSong);
     }
 
 
 
 
     private FilePlayer playNext() {
-        currentIndex++;
-        return new FilePlayer(this.fileNames.get(currentIndex), this);
+        FilePlayer f = new FilePlayer(currentSong.getFile(), this);
+        currentPlayer = f;
+        return f;
+    }
+
+    public void addSong(File song) {
+        Song s = new Song(songDatabase, song);
+        songDatabase.addSong(s);
     }
 
 
-    public FilePlayer getCurrentFilePlayer() {
-        return currentFilePlayer;
+    public FilePlayer getPlayer() {
+        return currentPlayer;
     }
 
 
