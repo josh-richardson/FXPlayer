@@ -25,7 +25,7 @@ public class Song{
         this.id = Utils.artifactId();
         this.metadata = new Metadata(musicFile);
 
-        if (!StringUtils.isBlank(metadata.artist)) {
+        if (metadata.artist != null && !StringUtils.isBlank(metadata.artist)) {
             Artist memberArtist;
             if ((memberArtist = db.getArtistByName(metadata.artist)) != null) {
                 artistId = memberArtist.getId();

@@ -1,7 +1,9 @@
 package com.joshuarichardson.fxplayer;
 
-import com.joshuarichardson.musicapi.resource.ImageResourceManager;
 import com.joshuarichardson.musicapi.PlaybackManager;
+import com.joshuarichardson.musicapi.TrackListener;
+import com.joshuarichardson.musicapi.TrackMeta;
+import com.joshuarichardson.musicapi.resource.ImageResourceManager;
 import com.joshuarichardson.musicapi.resource.ImgRef;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,10 +17,11 @@ import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
-public class Controller implements Initializable {
+public class Controller implements Initializable, TrackListener {
     @FXML
     private Button btnPrevious;
     @FXML
@@ -56,13 +59,23 @@ public class Controller implements Initializable {
         btnPlayPause.setOnAction(playPauseHandler());
         btnAddMusic.setOnAction(addMusicHandler());
 
+        stage.setOnCloseRequest(getOnCloseRequest());
 
-        stage.setOnCloseRequest(event -> {
-
+        playbackManager.playingProperty().addListener((observable, oldValue, newValue) -> {
+            ImgRef result = imageResourceManager.get(newValue ? "pause" : "play");
+            getBoundImage(btnPlayPause).setImage(result.getImage());
+            getBoundImage(btnPlayPause).setTranslateX(result.getXShift());
         });
+
+        playbackManager.addTrackChangedListener(this);
 
     }
 
+    private EventHandler<WindowEvent> getOnCloseRequest() {
+        return event -> {
+
+        };
+    }
 
     //region Event handlers
     private EventHandler<ActionEvent> playPauseHandler() {
@@ -73,14 +86,9 @@ public class Controller implements Initializable {
         return event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Add MP3 Files");
-            Stream<File> files = fileChooser.showOpenMultipleDialog(stage.getScene().getWindow()).stream().filter(e -> e != null && e.exists() && !e.isDirectory());
-            if (files.count() != 0) {
-                playbackManager.playingProperty().addListener((observable, oldValue, newValue) -> {
-                    ImgRef result = imageResourceManager.get(newValue ? "pause" : "play");
-                    getBoundImage(btnPlayPause).setImage(result.getImage());
-                    getBoundImage(btnPlayPause).setTranslateX(result.getXShift());
-                    playbackManager.getPlayer().getPlayer().play();
-                });
+            List<File> files = fileChooser.showOpenMultipleDialog(stage.getScene().getWindow())
+                    .stream().filter(e -> e != null && e.exists() && !e.isDirectory()).collect(Collectors.toList());
+            if (files.size() != 0) {
                 files.forEach(f -> playbackManager.addSong(f));
             }
         };
@@ -96,6 +104,11 @@ public class Controller implements Initializable {
 
     private ImageView getBoundImage(Button b) {
         return (ImageView) b.getGraphic();
+    }
+
+    @Override
+    public void trackChanged(TrackMeta meta) {
+
     }
     //endregion
 

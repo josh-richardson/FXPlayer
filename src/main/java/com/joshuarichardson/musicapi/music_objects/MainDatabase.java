@@ -12,10 +12,10 @@ public class MainDatabase {
 
     //JUST IDs in objects, all shit stored in these arrays.
 
-    private ArrayList<Song> songs;
-    private ArrayList<Album> albums;
-    private ArrayList<Artist> artists;
-    private ArrayList<Playlist> playlists;
+    private ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<Album> albums = new ArrayList<>();
+    private ArrayList<Artist> artists = new ArrayList<>();
+    private ArrayList<Playlist> playlists = new ArrayList<>();
 
 
     public MainDatabase(ArrayList<Song> songs, ArrayList<Album> albums, ArrayList<Artist> artists, ArrayList<Playlist> playlists) {

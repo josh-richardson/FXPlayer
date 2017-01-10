@@ -24,9 +24,6 @@ import java.time.LocalDateTime;
 public class Metadata {
 
     //encapsulation not needed for these variables
-
-
-
     public String title;
     public String artist;
     public String album;
